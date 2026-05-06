@@ -4,3 +4,5 @@
 | --------------- | -------------------- | ------------- |
 | VS Code / local | `npm i`              | `npm run web` |
 | CodeSandbox     | automatic            | `npm start`   |
+
+Jakub Porwoł 55439
