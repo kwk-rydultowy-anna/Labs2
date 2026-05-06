@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import {
   FlatList,
   Pressable,
@@ -19,6 +19,10 @@ export default function App() {
   const [search, setSearch] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("Wszystkie");
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
+
+  const [darkMode, setDarkMode] = useState(false);
+
+  const theme = darkMode ? darkTheme : lightTheme;
 
   const filteredEvents = useMemo(() => {
     return events.filter((event) => {
@@ -49,20 +53,67 @@ export default function App() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="dark-content" />
+    <SafeAreaView
+      style={[
+        styles.container,
+        {
+          backgroundColor: theme.background,
+        },
+      ]}
+    >
+      <StatusBar barStyle={darkMode ? "light-content" : "dark-content"} />
 
-      <Text style={styles.header}>Katalog wydarzeń</Text>
+      <View style={styles.topRow}>
+        <View>
+          <Text
+            style={[
+              styles.header,
+              {
+                color: theme.text,
+              },
+            ]}
+          >
+            Katalog wydarzeń
+          </Text>
 
-      <Text style={styles.description}>
-        Znajdź interesujące wydarzenia w swojej okolicy.
-      </Text>
+          <Text
+            style={[
+              styles.description,
+              {
+                color: theme.secondaryText,
+              },
+            ]}
+          >
+            Znajdź interesujące wydarzenia.
+          </Text>
+        </View>
+
+        <Pressable
+          onPress={() => setDarkMode((prev) => !prev)}
+          style={({ pressed }) => [
+            styles.themeButton,
+            {
+              backgroundColor: theme.card,
+            },
+            pressed && styles.buttonPressed,
+          ]}
+        >
+          <Text style={{ fontSize: 20 }}>{darkMode ? "☀️" : "🌙"}</Text>
+        </Pressable>
+      </View>
 
       <TextInput
         value={search}
         onChangeText={setSearch}
         placeholder="Wyszukaj wydarzenie..."
-        style={styles.input}
+        placeholderTextColor={theme.placeholder}
+        style={[
+          styles.input,
+          {
+            backgroundColor: theme.card,
+            color: theme.text,
+          },
+        ]}
       />
 
       <View style={styles.categoriesContainer}>
@@ -75,14 +126,20 @@ export default function App() {
               onPress={() => setSelectedCategory(category)}
               style={({ pressed }) => [
                 styles.categoryButton,
-                active && styles.categoryButtonActive,
+                {
+                  backgroundColor: active
+                    ? theme.activeCategory
+                    : theme.category,
+                },
                 pressed && styles.buttonPressed,
               ]}
             >
               <Text
                 style={[
                   styles.categoryButtonText,
-                  active && styles.categoryButtonTextActive,
+                  {
+                    color: active ? "#fff" : theme.text,
+                  },
                 ]}
               >
                 {category}
@@ -96,7 +153,11 @@ export default function App() {
         onPress={() => setShowFavoritesOnly((prev) => !prev)}
         style={({ pressed }) => [
           styles.filterButton,
-          showFavoritesOnly && styles.filterButtonActive,
+          {
+            backgroundColor: showFavoritesOnly
+              ? theme.filterButtonActive
+              : theme.filterButton,
+          },
           pressed && styles.buttonPressed,
         ]}
       >
@@ -105,7 +166,16 @@ export default function App() {
         </Text>
       </Pressable>
 
-      <Text style={styles.resultsText}>Wyniki: {filteredEvents.length}</Text>
+      <Text
+        style={[
+          styles.resultsText,
+          {
+            color: theme.text,
+          },
+        ]}
+      >
+        Wyniki: {filteredEvents.length}
+      </Text>
 
       <FlatList
         data={filteredEvents}
@@ -121,20 +191,69 @@ export default function App() {
             favorite={item.favorite}
             popular={item.popular}
             onToggleFavorite={() => toggleFavorite(item.id)}
+            darkMode={darkMode}
           />
         )}
-        ListEmptyComponent={<Text style={styles.emptyText}>Brak wyników.</Text>}
+        ListEmptyComponent={
+          <Text
+            style={[
+              styles.emptyText,
+              {
+                color: theme.secondaryText,
+              },
+            ]}
+          >
+            Brak wyników.
+          </Text>
+        }
       />
     </SafeAreaView>
   );
 }
 
+const lightTheme = {
+  background: "#f2f2f2",
+  card: "#ffffff",
+  text: "#111111",
+  secondaryText: "#666666",
+  placeholder: "#999999",
+  category: "#dddddd",
+  activeCategory: "#222222",
+  filterButton: "#4a67ff",
+  filterButtonActive: "#243ec7",
+};
+
+const darkTheme = {
+  background: "#121212",
+  card: "#1f1f1f",
+  text: "#ffffff",
+  secondaryText: "#b0b0b0",
+  placeholder: "#777777",
+  category: "#2b2b2b",
+  activeCategory: "#4a67ff",
+  filterButton: "#3b55d9",
+  filterButtonActive: "#1f36a8",
+};
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f2f2f2",
     paddingHorizontal: 16,
     paddingTop: 20,
+  },
+
+  topRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
+  },
+
+  themeButton: {
+    width: 50,
+    height: 50,
+    borderRadius: 14,
+    justifyContent: "center",
+    alignItems: "center",
   },
 
   header: {
@@ -145,12 +264,10 @@ const styles = StyleSheet.create({
 
   description: {
     fontSize: 15,
-    color: "#666",
     marginBottom: 16,
   },
 
   input: {
-    backgroundColor: "#fff",
     borderRadius: 12,
     paddingHorizontal: 14,
     paddingVertical: 12,
@@ -166,34 +283,19 @@ const styles = StyleSheet.create({
   },
 
   categoryButton: {
-    backgroundColor: "#ddd",
     paddingHorizontal: 14,
     paddingVertical: 10,
     borderRadius: 20,
   },
 
-  categoryButtonActive: {
-    backgroundColor: "#222",
-  },
-
   categoryButtonText: {
-    color: "#222",
     fontWeight: "600",
   },
 
-  categoryButtonTextActive: {
-    color: "#fff",
-  },
-
   filterButton: {
-    backgroundColor: "#4a67ff",
     paddingVertical: 12,
     borderRadius: 12,
     marginBottom: 14,
-  },
-
-  filterButtonActive: {
-    backgroundColor: "#243ec7",
   },
 
   filterButtonText: {
@@ -212,68 +314,10 @@ const styles = StyleSheet.create({
     paddingBottom: 30,
   },
 
-  card: {
-    backgroundColor: "#fff",
-    borderRadius: 16,
-    padding: 16,
-    marginBottom: 14,
-  },
-
-  cardTop: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 12,
-  },
-
-  cardTitle: {
-    fontSize: 20,
-    fontWeight: "700",
-    flex: 1,
-    marginRight: 10,
-  },
-
-  cardText: {
-    fontSize: 15,
-    marginBottom: 6,
-    color: "#444",
-  },
-
-  favoriteButton: {
-    marginTop: 14,
-    backgroundColor: "#333",
-    borderRadius: 10,
-    paddingVertical: 12,
-  },
-
-  favoriteButtonActive: {
-    backgroundColor: "#c62828",
-  },
-
-  favoriteButtonText: {
-    color: "#fff",
-    textAlign: "center",
-    fontWeight: "700",
-  },
-
-  badge: {
-    backgroundColor: "#ff9800",
-    borderRadius: 10,
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-  },
-
-  badgeText: {
-    color: "#fff",
-    fontWeight: "700",
-    fontSize: 12,
-  },
-
   emptyText: {
     textAlign: "center",
     marginTop: 30,
     fontSize: 16,
-    color: "#666",
   },
 
   buttonPressed: {

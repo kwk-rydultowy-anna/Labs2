@@ -9,6 +9,17 @@ type Props = {
   favorite: boolean;
   popular?: boolean;
   onToggleFavorite: () => void;
+  darkMode?: boolean;
+};
+
+const lightTheme = {
+  card: "#ffffff",
+  text: "#111111",
+};
+
+const darkTheme = {
+  card: "#1f1f1f",
+  text: "#ffffff",
 };
 
 export function EventCard({
@@ -18,19 +29,38 @@ export function EventCard({
   location,
   favorite,
   popular,
+  darkMode,
   onToggleFavorite,
 }: Props) {
+  const theme = darkMode ? darkTheme : lightTheme;
+
   return (
-    <View style={styles.card}>
-      <Text style={styles.title}>
+    <View
+      style={[
+        styles.card,
+        {
+          backgroundColor: theme.card,
+        },
+      ]}
+    >
+      <Text
+        style={[
+          styles.title,
+          {
+            color: theme.text,
+          },
+        ]}
+      >
         {title}
-        {favorite ? "⭐" : ""}
-        {popular ? "🔝" : ""}
+        {favorite ? " ⭐" : ""}
+        {popular ? " 🔝" : ""}
       </Text>
 
-      <Text>{date}</Text>
-      <Text>{category}</Text>
-      <Text>{location}</Text>
+      <Text style={{ color: theme.text }}>{date}</Text>
+
+      <Text style={{ color: theme.text }}>{category}</Text>
+
+      <Text style={{ color: theme.text }}>{location}</Text>
 
       <Pressable
         style={[styles.button, favorite && styles.buttonActive]}
@@ -46,7 +76,6 @@ export function EventCard({
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: "#fff",
     padding: 16,
     borderRadius: 12,
     marginBottom: 12,
