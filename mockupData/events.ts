@@ -1,0 +1,43 @@
+export const EVENTS_DATA = [
+  {
+    id: "1",
+    title: "UFC",
+    date: "2026-05-12",
+    category: "Sport",
+    location: "Wrocław",
+    favorite: false,
+  },
+  {
+    id: "2",
+    title: "Marmolada Festiwal",
+    date: "2026-07-15",
+    category: "Skating",
+    location: "Gaszowice",
+    favorite: true,
+  },
+  {
+    id: "3",
+    title: "Lyski Rock Festiwal",
+    date: "2026-08-29",
+    category: "Muzyka",
+    location: "Lyski",
+    favorite: true,
+  },
+  {
+    id: "4",
+    title: "Maraton Miejski",
+    date: "25.05.2026",
+    category: "Sport",
+    location: "Poznań",
+    favorite: false,
+    popular: true,
+  },
+  {
+    id: "5",
+    title: "Premiera Filmu",
+    date: "28.05.2026",
+    category: "Film",
+    location: "Gdańsk",
+    favorite: false,
+  },
+];
